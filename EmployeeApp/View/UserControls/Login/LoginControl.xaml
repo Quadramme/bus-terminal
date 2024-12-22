@@ -1,0 +1,97 @@
+﻿<UserControl x:Class="EmployeeApp.View.UserControls.Login.LoginControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EmployeeApp.View.UserControls.Login"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:cvt="clr-namespace:EmployeeApp.View.UserControls.Util"
+             xmlns:vr="clr-namespace:EmployeeApp.View.UserControls.ValidationRules"
+             mc:Ignorable="d" 
+             FontFamily="{DynamicResource MaterialDesignFont}"
+             d:DesignWidth="600" d:DesignHeight="700">
+
+    <UserControl.Resources>
+        <cvt:NullStringConverter x:Key="NullStringConverter" />
+        <vr:RequiredValidationRule x:Key="RequiredValidationRule" />
+    </UserControl.Resources>
+
+    <Grid>
+
+        <!-- Карточка -->
+        <Rectangle Panel.ZIndex="0"
+                   Fill="White" RadiusX="8" RadiusY="8" StrokeThickness="0" 
+                   Effect="{DynamicResource MaterialDesignElevationShadow1}" />
+
+        <!-- Форма входа -->
+        <Grid Panel.ZIndex="1">
+
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.1*"/>
+                    <ColumnDefinition Width="0.8*"/>
+                    <ColumnDefinition Width="0.1*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="1"
+                            VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                    <Label Margin="0 0 0 25" HorizontalAlignment="Center"
+                            FontSize="35" FontWeight="Light"
+                            Content="Вход"/>
+
+                    <StackPanel Margin="0 0 0 25" 
+                                Orientation="Horizontal" >
+
+                        <Image Margin="7 0 7 0"
+                                Source="/View/UserControls/Login/account-box-outline.png" 
+                                MaxWidth="42" OpacityMask="#8F000000" />
+
+                        <TextBox MinWidth="390" MaxWidth="480"
+                                    md:HintAssist.Hint="Логин"
+                                    FontSize="19" FontWeight="Light"
+                                    Style="{StaticResource MaterialDesignFilledTextBox}" >
+                            <TextBox.Text>
+                                <Binding Path="Login" 
+                                            UpdateSourceTrigger="PropertyChanged"
+                                            Converter="{StaticResource NullStringConverter}" >
+                                    <Binding.ValidationRules>
+                                        <vr:RequiredValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                    </StackPanel>
+
+                    <StackPanel Margin="0 0 0 25" 
+                                Orientation="Horizontal" >
+
+                        <Image Margin="7 0 7 0"
+                                Source="/View/UserControls/Login/lock-outline.png" 
+                                MaxWidth="42" OpacityMask="#8F000000" />
+
+                        <PasswordBox MinWidth="390" MaxWidth="480"
+                                    md:HintAssist.Hint="Пароль"
+                                    FontSize="19" FontWeight="Light"
+                                    md:PasswordBoxAssist.Password="{Binding Path=Password, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{StaticResource MaterialDesignFilledPasswordBox}" />
+
+                    </StackPanel>
+
+                    <Button MinHeight="40"
+                            MaxWidth="250" FontSize="21" 
+                            FontWeight="Light"
+                            Content="Войти"
+                            Command="{Binding Path=CmdLogin}"/>
+
+                </StackPanel>
+
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>

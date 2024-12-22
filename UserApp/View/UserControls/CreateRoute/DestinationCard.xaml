@@ -1,0 +1,102 @@
+﻿<UserControl x:Class="UserApp.View.UserControls.CreateRoute.DestinationCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UserApp.View.UserControls.CreateRoute"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             FontFamily="{DynamicResource MaterialDesignFont}"
+             d:DesignHeight="100" d:DesignWidth="600">
+    <Grid>
+        
+        <Rectangle 
+            Panel.ZIndex="0"
+            Fill="White" RadiusX="8" RadiusY="8" StrokeThickness="0" 
+            Effect="{DynamicResource MaterialDesignElevationShadow1}" />
+
+        <Grid
+            Panel.ZIndex="1">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="80"/>
+                <RowDefinition Height="10"/>
+            </Grid.RowDefinitions>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel
+                Grid.Row="1" Grid.Column="0" 
+                VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                <Button
+                    Margin="0 5 0 5" Padding="0 0 0 0" HorizontalAlignment="Center"
+                    Width="30" Height="30"
+                    Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                    FontSize="22"
+                    Content="▴" 
+                    Command="{Binding Path=DataContext.CmdMoveRelUp, RelativeSource={RelativeSource FindAncestor, 
+                              AncestorType={x:Type Window}}}"
+                    CommandParameter="{Binding}"
+                    IsEnabled="{Binding Path=EnableMoveUp}"/>
+
+                <Button
+                    Margin="0 5 0 5" Padding="0 0 0 0" HorizontalAlignment="Center"
+                    Width="30" Height="30"
+                    Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                    FontSize="22"
+                    Content="▾"
+                    Command="{Binding Path=DataContext.CmdMoveRelDown, RelativeSource={RelativeSource FindAncestor, 
+                              AncestorType={x:Type Window}}}"
+                    CommandParameter="{Binding}"
+                    IsEnabled="{Binding Path=EnableMoveDown}"/>
+
+            </StackPanel>
+
+            
+
+            <ComboBox
+                Grid.Row="1" Grid.Column="1"
+                Margin="5 5 5 5"
+                Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                ItemsSource="{Binding Path=DataContext.Destinations, RelativeSource={RelativeSource FindAncestor, 
+                              AncestorType={x:Type Window}}}"
+                DisplayMemberPath="Name"
+                SelectedValuePath="Id"
+                SelectedValue="{Binding Path=DestinationId}" />
+
+            <Label
+                Grid.Row="1" Grid.Column="2"
+                Margin="4 8 0 0"
+                FontSize="10"
+                Content="Прибытие в:" />
+
+            <md:TimePicker
+                x:Name="timepicker"
+                Grid.Row="1" Grid.Column="2"
+                Padding="0 0 0 0" Margin="5 5 5 5" HorizontalAlignment="Center" VerticalAlignment="Center"
+                SelectedTime="{Binding Path=ArrivalTime}"
+                FontSize="20" MinWidth="75" Is24Hours="True" />
+
+            <Button
+                Grid.Row="1" Grid.Column="3"
+                Margin="5 5 5 5" Padding="0 0 0 0" HorizontalAlignment="Center"
+                Width="30" Height="30"
+                FontSize="14"
+                Content="❌"
+                Command="{Binding Path=DataContext.CmdRemoveRel, RelativeSource={RelativeSource FindAncestor, 
+                          AncestorType={x:Type Window}}}"
+                CommandParameter="{Binding}"
+                IsEnabled="{Binding Path=DataContext.CanRemove, RelativeSource={RelativeSource FindAncestor, 
+                            AncestorType={x:Type Window}}}"/>
+
+        </Grid>
+        
+    </Grid>
+</UserControl>

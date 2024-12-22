@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="EmployeeApp.View.UserControls.UserTrips.UserOrdersControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EmployeeApp.View.UserControls.UserTrips"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Button Grid.Column="0" VerticalAlignment="Top"
+            Margin="5 15 5 0" Padding="0 0 0 0"
+            Width="60" Height="60"
+            Style="{StaticResource MaterialDesignFloatingActionButton}"
+            FontSize="30"
+            Content="↻"
+            Command="{Binding Path=CmdReloadOrders}" />
+
+        <ScrollViewer Grid.Column="1"
+                  Margin="15"
+                  MaxWidth="1100"
+                  Style="{StaticResource MaterialDesignScrollViewer}"
+                  VerticalScrollBarVisibility="Visible" >
+
+            <ItemsControl ItemsSource="{Binding Orders}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <local:OrderCard Margin="25 15 25 15"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </ScrollViewer>
+
+    </Grid>
+</UserControl>

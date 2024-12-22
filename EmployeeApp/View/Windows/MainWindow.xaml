@@ -1,0 +1,155 @@
+﻿<Window x:Class="EmployeeApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:EmployeeApp"
+        xmlns:vm="clr-namespace:EmployeeApp.ViewModel"
+        xmlns:ucLogin="clr-namespace:EmployeeApp.View.UserControls.Login"
+        xmlns:ucCreateRoute="clr-namespace:EmployeeApp.View.UserControls.CreateRoute"
+        xmlns:ucCreateTrip="clr-namespace:EmployeeApp.View.UserControls.CreateTrip"
+        xmlns:ucSearchRoutes="clr-namespace:EmployeeApp.View.UserControls.SearchRoutes"
+        xmlns:ucMakeOrder="clr-namespace:EmployeeApp.View.UserControls.MakeOrder"
+        xmlns:ucOrderResult="clr-namespace:EmployeeApp.View.UserControls.Ticket"
+        mc:Ignorable="d"
+        Style="{StaticResource MaterialDesignWindow}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto" 
+        Title="Автовокзал"
+        Height="900" Width="1600"
+        MinWidth="1280" MinHeight="720">
+
+    <Grid>
+
+        <ContentPresenter Content="{Binding}">
+
+            <ContentPresenter.Resources>
+
+                <DataTemplate DataType="{x:Type vm:LoginViewModel}">
+
+                    <Grid>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="0.1*"/>
+                            <RowDefinition Height="0.8*"/>
+                            <RowDefinition Height="0.1*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.1*"/>
+                            <ColumnDefinition Width="0.8*"/>
+                            <ColumnDefinition Width="0.1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ucLogin:LoginControl Grid.Row="1" Grid.Column="1"
+                                              DataContext="{Binding Path=vmLogin,
+                                                            RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+
+                    </Grid>
+
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type vm:CashierViewModel}">
+
+                    <TabControl TabStripPlacement="Left"
+                                Style="{StaticResource MaterialDesignFilledUniformTabControl}" >
+
+                        <TabItem>
+
+                            <TabItem.Header>
+                                <TextBlock FontSize="20" FontWeight="Light"
+                                           Foreground="White">Поиск маршрутов</TextBlock>
+                            </TabItem.Header>
+
+                            <ContentPresenter Content="{Binding Path=SearchTabViewModel}">
+
+                                <ContentPresenter.Resources>
+
+                                    <DataTemplate DataType="{x:Type vm:SearchRoutesViewModel}">
+                                        <ucSearchRoutes:SearchRoutesControl 
+                                            DataContext="{Binding Path=vmCashier.vmSearchRoutes, 
+                                                          RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                                    </DataTemplate>
+
+                                    <DataTemplate DataType="{x:Type vm:MakeOrderViewModel}">
+                                        <ucMakeOrder:MakeOrderControl 
+                                            DataContext="{Binding Path=vmCashier.vmMakeOrder, 
+                                                          RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                                    </DataTemplate>
+
+                                    <DataTemplate DataType="{x:Type vm:OrderResultViewModel}">
+                                        <ucOrderResult:OrderResultControl
+                                            DataContext="{Binding Path=vmCashier.vmOrderResult, 
+                                                          RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                                    </DataTemplate>
+
+                                </ContentPresenter.Resources>
+
+                            </ContentPresenter>
+
+                        </TabItem>
+
+                    </TabControl>
+
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type vm:OperatorViewModel}">
+
+                    <TabControl TabStripPlacement="Left"
+                                Style="{StaticResource MaterialDesignFilledUniformTabControl}" >
+
+                        <TabItem>
+                            <TabItem.Header>
+                                <TextBlock FontSize="20" FontWeight="Light"
+                                           Foreground="White">Создание маршрутов</TextBlock>
+                            </TabItem.Header>
+                            <ucCreateRoute:CreateRouteControl DataContext="{Binding Path=vmOperator.vmCreateRoute,
+                                                                            RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                        </TabItem>
+                        
+                        <TabItem>
+
+                            <TabItem.Header>
+                                <TextBlock FontSize="20" FontWeight="Light"
+                                           Foreground="White">Создание поездок</TextBlock>
+                            </TabItem.Header>
+
+                            <ContentPresenter Content="{Binding Path=TripsTabViewModel}">
+
+                                <ContentPresenter.Resources>
+
+                                    <DataTemplate DataType="{x:Type vm:SearchRoutesCompanyViewModel}">
+                                        <ucSearchRoutes:SearchRoutesCompanyControl
+                                         DataContext="{Binding Path=vmOperator.vmSearchRoutesCompany, 
+                                         RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                                    </DataTemplate>
+
+                                    <DataTemplate DataType="{x:Type vm:CreateTripsViewModel}">
+                                        <ucCreateTrip:CreateTripControl
+                                            DataContext="{Binding Path=vmOperator.vmCreateTrips, 
+                                            RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                                    </DataTemplate>
+
+                                </ContentPresenter.Resources>
+
+                            </ContentPresenter>
+
+                        </TabItem>
+
+                    </TabControl>
+
+                </DataTemplate>
+
+            </ContentPresenter.Resources>
+
+        </ContentPresenter>
+
+    </Grid>
+
+</Window>

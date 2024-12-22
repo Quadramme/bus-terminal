@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="UserApp.View.UserControls.MakeOrder.OrderInfoCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UserApp.View.UserControls.MakeOrder"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             FontFamily="{DynamicResource MaterialDesignFont}"
+             d:DesignHeight="300" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <local:PriceConverter x:Key="PriceConverter" />
+        <local:CountPriceConverter x:Key="CountPriceConverter" />
+        <local:NotZeroVisibilityConverter x:Key="VisibilityConverter" />
+    </UserControl.Resources>
+
+    <Grid>
+
+        <!-- Задний фон (карточка) -->
+        <Rectangle Panel.ZIndex="0"
+                   Fill="White" RadiusX="8" RadiusY="8" StrokeThickness="0"
+                   Effect="{DynamicResource MaterialDesignElevationShadow1}" />
+
+        <StackPanel Margin="15"
+                    DataContext="{Binding Path=DataContext.vmMakeOrder,
+                                  RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+
+            <Label Margin="0 0 0 5"
+                   FontSize="23" 
+                   Content="Стоимость билетов"/>
+
+            <Grid Visibility="{Binding Path=AdultTicketCount, 
+                               Converter={StaticResource VisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" 
+                       FontSize="16" 
+                       Content="Взрослый"/>
+
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                           FontSize="16" >
+
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource CountPriceConverter}" ConverterCulture="ru-RU">
+                            <Binding Path="AdultTicketCount" />
+                            <Binding Path="AdultTicketPrice" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+
+                </TextBlock>
+
+            </Grid>
+
+            <Grid Visibility="{Binding Path=UnderageTicketCount, 
+                               Converter={StaticResource VisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" 
+                       FontSize="16" 
+                       Content="Детский"/>
+
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                           FontSize="16" >
+
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource CountPriceConverter}" ConverterCulture="ru-RU">
+                            <Binding Path="UnderageTicketCount" />
+                            <Binding Path="UnderageTicketPrice" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+
+                </TextBlock>
+
+            </Grid>
+
+            <Separator Margin="5 10 5 10"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Label Margin="0 0 0 5"
+                       FontSize="26" FontWeight="Bold"
+                       Content="Итого" />
+
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                           FontSize="26" FontWeight="Bold"
+                           Text="{Binding Path=TotalOrderPrice, 
+                                  Converter={StaticResource PriceConverter},
+                                  ConverterCulture=ru-RU}" />
+
+            </Grid>
+
+            <Button HorizontalAlignment="Center"
+                    Margin="0 15 0 0"
+                    Width="250" Height="45"
+                    FontSize="22" FontWeight="Light"
+                    Content="Перейти к оплате" 
+                    Command="{Binding Path=CmdMakeOrder}"/>
+
+        </StackPanel>
+
+    </Grid>
+
+</UserControl>

@@ -1,0 +1,205 @@
+﻿<UserControl x:Class="UserApp.View.UserControls.UserTrips.TicketCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UserApp.View.UserControls.UserTrips"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             FontFamily="{DynamicResource MaterialDesignFont}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <local:DOBConverter x:Key="DOBConverter"/>
+        <local:LuggageConverter x:Key="LuggageConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <!-- Задний фон (карточка) -->
+        <Rectangle Grid.RowSpan="3" Grid.ColumnSpan="3" Panel.ZIndex="0"
+           Fill="White" RadiusX="8" RadiusY="8" StrokeThickness="0" 
+           Effect="{DynamicResource MaterialDesignElevationShadow1}" />
+
+        <!-- Содержимое -->
+        <StackPanel Margin="25">
+
+            <Grid Margin="0 0 0 30">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Center"
+                           FontSize="25" FontWeight="Light"
+                           Text="Билет" />
+
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center" 
+                           FontSize="12" FontWeight="Light"  TextAlignment="Right"
+                           Text="{Binding Path=DataContext.vmOrderTickets.Order.Id, 
+                                  RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                  StringFormat=Номер заказа {0:D12}}" />
+
+            </Grid>
+
+            <Separator Margin="0 0 0 30"/>
+
+            <Grid Margin="0 0 0 30">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+
+                    <TextBlock Margin="0 0 0 5"  VerticalAlignment="Center"
+                               FontSize="15" FontWeight="Light"
+                               Text="Номер билета" />
+
+                    <TextBlock VerticalAlignment="Center"
+                               FontSize="17"
+                               Text="{Binding Path=Id}" />
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+
+                    <TextBlock Margin="0 0 0 5" VerticalAlignment="Center"
+                               FontSize="15" FontWeight="Light"
+                               Text="Дата оформления" />
+
+                    <TextBlock VerticalAlignment="Center"
+                               FontSize="17"
+                               Text="{Binding Path=DataContext.vmOrderTickets.Order.Date,
+                                      RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      StringFormat={}{0:D}, ConverterCulture=ru-RU}" />
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+
+                    <TextBlock Margin="0 0 0 5" VerticalAlignment="Center"
+                               FontSize="15" FontWeight="Light"
+                               Text="Пассажир" />
+
+                    <TextBlock VerticalAlignment="Center"
+                               FontSize="17" TextWrapping="WrapWithOverflow"
+                               Text="{Binding Path=FullName}" />
+
+                </StackPanel>
+
+            </Grid>
+
+            <Separator Margin="0 0 0 30"/>
+
+            <Grid Margin="0 0 0 30">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+
+                    <TextBlock Margin="0 0 0 5" VerticalAlignment="Center"
+                               FontSize="15" FontWeight="Light"
+                               Text="Отправление" />
+
+                    <TextBlock Margin="0 0 0 5" VerticalAlignment="Center"
+                               FontSize="19" FontWeight="Bold"
+                               Text="{Binding Path=DataContext.vmOrderTickets.Order.DepartureDate,
+                                      RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      StringFormat='{}{0:t}, {0:D}', ConverterCulture=ru-RU}" />
+
+                    <TextBlock Margin="0 0 0 3" VerticalAlignment="Center"
+                               FontSize="15" TextWrapping="WrapWithOverflow"
+                               Text="{Binding Path=DataContext.vmOrderTickets.Order.DepartureCity,
+                                      RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+
+                    <TextBlock Margin="0 0 0 3" VerticalAlignment="Center"
+                               FontSize="15" TextWrapping="WrapWithOverflow"
+                               Text="{Binding Path=DataContext.vmOrderTickets.Order.DepartureInfo,
+                                      RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+
+                    <TextBlock VerticalAlignment="Center"
+                               FontSize="15" TextWrapping="WrapWithOverflow"
+                               Text="{Binding Path=DataContext.vmOrderTickets.Order.DeparturePlatform,
+                                      RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      StringFormat=Платформа {0}}" />
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+
+                    <TextBlock Margin="0 0 0 5"  VerticalAlignment="Center"
+                               FontSize="15" FontWeight="Light"
+                               Text="Рейс / багаж" />
+
+                    <TextBlock Margin="0 0 0 5" VerticalAlignment="Center"
+                               FontSize="19" FontWeight="Bold"
+                               Text="{Binding Path=RouteId, StringFormat={}{0:D12}}" />
+
+                    <TextBlock Margin="0 0 0 3" VerticalAlignment="Center"
+                               FontSize="15" 
+                               Text="{Binding Path=DOB, Converter={StaticResource DOBConverter}}" />
+
+                    <TextBlock VerticalAlignment="Center"
+                               FontSize="15" 
+                               Text="{Binding Path=Luggage, Converter={StaticResource LuggageConverter}}" />
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+
+                    <TextBlock Margin="0 0 0 5" VerticalAlignment="Center"
+                               FontSize="15" FontWeight="Light"
+                               Text="Прибытие" />
+
+                    <TextBlock Margin="0 0 0 5" VerticalAlignment="Center"
+                               FontSize="19" FontWeight="Bold"
+                               Text="{Binding Path=DataContext.vmOrderTickets.Order.ArrivalDate,
+                                      RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      StringFormat='{}{0:t}, {0:D}', ConverterCulture=ru-RU}" />
+
+                    <TextBlock Margin="0 0 0 3" VerticalAlignment="Center"
+                               FontSize="15" TextWrapping="WrapWithOverflow"
+                               Text="{Binding Path=DataContext.vmOrderTickets.Order.ArrivalCity,
+                                      RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+
+                    <TextBlock Margin="0 0 0 3" VerticalAlignment="Center"
+                               FontSize="15" TextWrapping="WrapWithOverflow"
+                               Text="{Binding Path=DataContext.vmOrderTickets.Order.ArrivalInfo,
+                                      RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+
+                    <TextBlock VerticalAlignment="Center"
+                               FontSize="15" TextWrapping="WrapWithOverflow"
+                               Text="{Binding Path=DataContext.vmOrderTickets.Order.DeparturePlatform,
+                                      RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                      StringFormat=Платформа {0}}" />
+
+                </StackPanel>
+
+            </Grid>
+            
+            <Separator Margin="0 0 0 30"/>
+
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right">
+                
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Bottom" 
+                           FontSize="25"
+                           Text="Цена: " />
+
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Bottom" 
+                           FontSize="29" FontWeight="Bold"  TextAlignment="Right"
+                           Text="{Binding Path=Price, StringFormat={}{0:C}, ConverterCulture=ru-RU}" />
+                
+            </StackPanel>
+            
+        </StackPanel>
+        
+    </Grid>
+
+</UserControl>

@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="EmployeeApp.View.UserControls.MakeOrder.MakeOrderControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EmployeeApp.View.UserControls.MakeOrder"
+             FontFamily="{StaticResource MaterialDesignFont}"
+             mc:Ignorable="d" 
+             d:DesignWidth="1920" d:DesignHeight="1080" >
+    <Grid DataContext="{Binding Path=DataContext.vmMakeOrder, 
+                        RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="0.675*" />
+            <ColumnDefinition Width="0.325*" />
+        </Grid.ColumnDefinitions>
+
+        <Button VerticalAlignment="Top" Margin="5 15 5 0"
+                Width="60" Height="60"
+                Style="{StaticResource MaterialDesignFloatingActionButton}"
+                FontSize="30"
+                Content="←"
+                Command="{Binding Path=DataContext.CmdBackToSearch, 
+                          RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+
+        <ScrollViewer Grid.Column="1"
+                      Margin="15" 
+                      Style="{StaticResource MaterialDesignScrollViewer}"
+                      Background="#00000000"
+                      VerticalScrollBarVisibility="Visible" >
+
+            <StackPanel>
+
+                <local:BuyerCard Margin="5 0 10 15" />
+
+                <local:RouteInfoCard Margin="5 0 10 15" />
+
+                <ItemsControl Margin="5 0 10 0"
+                              ItemsSource="{Binding Tickets}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <local:TicketCard
+                                Margin="0 0 0 15" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Button Margin="5 0 0 15" HorizontalAlignment="Left"
+                        Width="250" Height="50"
+                        FontSize="20" FontWeight="Light"
+                        Content="Добавить билет" 
+                        Command="{Binding Path=CmdAddTicket}" />
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+        <StackPanel Grid.Column="2"
+                    Margin="0 15 15 15" >
+            <local:OrderInfoCard />
+            
+        </StackPanel>
+        
+    </Grid>
+
+</UserControl>

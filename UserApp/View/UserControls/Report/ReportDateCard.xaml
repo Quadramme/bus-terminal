@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="UserApp.View.UserControls.Report.ReportDateCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UserApp.View.UserControls.Report"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <local:ReportCreatedConverter x:Key="ReportCreatedConverter"/>
+        <local:IsCustomDateConverter x:Key="IsCustomDateConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+
+        <Rectangle Panel.ZIndex="0"
+           Fill="White" RadiusX="8" RadiusY="8" StrokeThickness="0" 
+           Effect="{DynamicResource MaterialDesignElevationShadow1}" />
+
+        <StackPanel Margin="25">
+
+            <StackPanel Margin="0 0 0 15"
+                Orientation="Horizontal">
+
+                <ComboBox x:Name="SearchTypeComboBox"
+                          Margin="0 0 15 0"
+                          Width="170" Height="30"
+                          SelectedValuePath="Key" DisplayMemberPath="Value"
+                          SelectedValue="{Binding Path=SearchType}"
+                          md:HintAssist.Hint="Выберите период"/>
+
+                <DatePicker Padding="8" Margin="0 0 15 0"
+                            Width="170" Height="30"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            SelectedDate="{Binding Path=StartDate}"
+                            Visibility="{Binding Path=SearchType, Converter={StaticResource IsCustomDateConverter}}"
+                            FontSize="12" MinWidth="75" 
+                            md:HintAssist.Hint="Начало" />
+
+                <DatePicker Padding="8"
+                            Width="170" Height="30"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            SelectedDate="{Binding Path=EndDate}"
+                            Visibility="{Binding Path=SearchType, Converter={StaticResource IsCustomDateConverter}}"
+                                         FontSize="12" MinWidth="75" 
+                            md:HintAssist.Hint="Конец" />
+            </StackPanel>
+
+            <StackPanel Margin="0 0 0 15"
+                Orientation="Horizontal">
+
+                <Button Margin="0 0 15 0"
+                        Width="200" 
+                        FontWeight="Light"
+                        Content="Составить отчёт" 
+                        Command="{Binding Path=CmdGetReport}"/>
+
+                <Button Width="200" 
+                        FontWeight="Light" Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                        Visibility="{Binding Path=ReportCreated, Converter={StaticResource ReportCreatedConverter}}"
+                        Content="Экспортировать в PDF" />
+
+            </StackPanel>
+
+        </StackPanel>
+
+    </Grid>
+
+</UserControl>
