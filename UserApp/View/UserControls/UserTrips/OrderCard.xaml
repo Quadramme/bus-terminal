@@ -110,23 +110,6 @@
 
                 <StackPanel Grid.Column="1">
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
-                                Margin="0 0 0 5">
-
-                        <TextBlock Grid.Column="0"
-                                   VerticalAlignment="Bottom" 
-                                   FontSize="15"
-                                   Text="Взрослый 3 x 250,00 " />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
-                                Margin="0 0 0 9">
-                        <TextBlock Grid.Column="0"
-                                   VerticalAlignment="Bottom" 
-                                   FontSize="15"
-                                   Text="Детский 1 x 150,00 " />
-                    </StackPanel>
-
                     <StackPanel Orientation="Horizontal" 
                                 HorizontalAlignment="Right">
 

@@ -123,6 +123,12 @@ namespace BLL.Services
                 arrivalId = rels.Last().DestinationId;
             }
 
+            int startIndex = rels.IndexOf(rels.Find(r => r.DestinationId == departureId.Value));
+            int endIndex = rels.IndexOf(rels.Find(r => r.DestinationId == arrivalId.Value));
+
+            if (startIndex >= endIndex)
+                throw new Exception("Departure point is located after arrival point");
+
             var destinations = new List<DTO.Destination>();
 
             int prevHour = 0;
@@ -144,7 +150,7 @@ namespace BLL.Services
                     House = d.House
                 });
 
-                if (rel.DestinationId >= departureId.Value && rel.DestinationId <= arrivalId.Value)
+                if (rel.OrderNumber >= startIndex && rel.OrderNumber <= endIndex)
                 {
                     if (rel.DestinationId > departureId.Value)
                     {

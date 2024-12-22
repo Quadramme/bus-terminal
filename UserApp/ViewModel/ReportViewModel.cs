@@ -3,11 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using UserApp.Model;
 using DTO = Interfaces.DTO;
+using System.Windows.Forms;
+using iText.Kernel.Pdf;
+using System.Security.Cryptography;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Kernel.Font;
+using iText.IO.Font;
+using iText.IO.Font.Constants;
+using iText.Layout.Properties;
+using iText.StyledXmlParser.Jsoup.Nodes;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace UserApp.ViewModel
 {
@@ -44,26 +53,31 @@ namespace UserApp.ViewModel
                 DateTime? start = null;
                 DateTime? end = null;
 
+                
+
                 if (searchType.Value == SearchTypes.ThisMonth)
                 {
                     start = new DateTime(DateTime.Now.Year,
                                          DateTime.Now.Month,
-                                         1);
+                                         1, 0, 0, 0);
 
                     end = new DateTime(DateTime.Now.Year,
                                        DateTime.Now.Month,
-                                       DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+                                       DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month),
+                                       23, 59, 59);
                 }
                 else if (searchType.Value == SearchTypes.ThisYear)
                 {
-                    start = new DateTime(DateTime.Now.Year, 1, 1);
-                    end = new DateTime(DateTime.Now.Year, 12, 31);
+                    start = new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0);
+                    end = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 0);
                 }
                 else if (searchType.Value == SearchTypes.Custom)
                 {
                     start = startDate.Value;
-                    end = endDate.Value;
+                    end = endDate.Value.AddHours(23).AddMinutes(59).AddSeconds(59);
                 }
+
+                SearchTypeSelected = searchType;
 
                 Dictionary<DTO.Order, List<DTO.Ticket>> report;
 
@@ -80,9 +94,13 @@ namespace UserApp.ViewModel
                 ReportPositions.Clear();
 
                 if (report.Count == 0)
+                {
+                    NoOrdersFound = true;
+                    ReportCreated = false;
                     return;
+                }
 
-                ReportData = new ReportData();
+                var newReportData = new ReportData();
 
                 var popularity = new Dictionary<int, int>();
 
@@ -133,6 +151,7 @@ namespace UserApp.ViewModel
                     var pos = new Model.ReportPositionData()
                     {
                         OrderId = order.Id,
+                        OrderDate = order.Date,
                         AdultPrice = adultTicketPrice1,
                         AdultCount = tickets.Where(t => t.Price == adultTicketPrice1).Count(),
                         UnderagePrice = underageTicketPrice1,
@@ -147,8 +166,8 @@ namespace UserApp.ViewModel
                     };
 
                     ReportPositions.Add(pos);
-                    ReportData.OverallPrice += pos.TotalPrice;
-                    ReportData.OverallTravelTime += pos.TravelTime;
+                    newReportData.OverallPrice += pos.TotalPrice;
+                    newReportData.OverallTravelTime += pos.TravelTime;
 
                 }
 
@@ -203,13 +222,16 @@ namespace UserApp.ViewModel
 
                 var mostPopularUserOrders = ReportPositions.Where(p => p.RouteInfoId == mostPopularRouteId);
 
-                ReportData.MostUsedRouteInfoId = mostPopularRouteId;
-                ReportData.MostUsedOrderCount = mostPopularUserOrders.Count();
-                ReportData.MostUsedSpent = mostPopularUserOrders.Sum(o => o.TotalPrice);
-                ReportData.MostUsedDeparture = ds[0].SettlementName;
-                ReportData.MostUsedArrival = ds.Last().SettlementName;
-                ReportData.MostUsedCompany = routeService.GetBusCompanyById(mostPopularTransport.BusCompanyId).Name;
+                newReportData.MostUsedRouteInfoId = mostPopularRouteId;
+                newReportData.MostUsedOrderCount = mostPopularUserOrders.Count();
+                newReportData.MostUsedSpent = mostPopularUserOrders.Sum(o => o.TotalPrice);
+                newReportData.MostUsedDeparture = ds[0].SettlementName;
+                newReportData.MostUsedArrival = ds.Last().SettlementName;
+                newReportData.MostUsedCompany = routeService.GetBusCompanyById(mostPopularTransport.BusCompanyId).Name;
 
+                ReportData = newReportData;
+
+                NoOrdersFound = false;
                 ReportCreated = true;
 
             },
@@ -232,6 +254,159 @@ namespace UserApp.ViewModel
                 return true;
             });
 
+            CmdExportPDF = new RelayCommand(obj =>
+            {
+
+                string filePath;
+
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+                saveFileDialog.Filter = "PDF (*.pdf)|";
+                saveFileDialog.InitialDirectory = "%HOMEPATH%";
+                saveFileDialog.RestoreDirectory = true;
+                saveFileDialog.DefaultExt = "pdf";
+                saveFileDialog.AddExtension = true;
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    filePath = saveFileDialog.FileName;
+                }
+                else
+                {
+                    //(window as MainWindow).DialogOk("Выберите папку для сохранения PDF");
+                    return;
+                }
+
+                PdfDocument pdfDocument;
+
+                try
+                {
+                    pdfDocument = new PdfDocument(new PdfWriter(filePath));
+                } 
+                catch (Exception ex)
+                {
+                    (window as MainWindow).DialogOk(ex.Message);
+                    return;
+                }
+
+                iText.Layout.Document doc = new iText.Layout.Document(pdfDocument);
+                
+                PdfFont font = PdfFontFactory.CreateFont("C:/Windows/Fonts/Arial.ttf", PdfEncodings.IDENTITY_H);
+
+                Text text = null;
+
+                switch (searchType.Value)
+                {
+                    case SearchTypes.ThisMonth:
+                        text = new Text("Отчёт за этот месяц");
+                        break;
+
+                    case SearchTypes.ThisYear:
+                        text = new Text("Отчёт за этот год");
+                        break;
+
+                    case SearchTypes.Overall:
+                        text = new Text("Отчёт за всё время");
+                        break;
+
+                    case SearchTypes.Custom:
+                        text = new Text("Отчёт за период с " + startDate?.ToString("dd/MM/yyyy") + " по " + endDate?.ToString("dd/MM/yyyy"));
+                        break;
+                }
+
+                doc.Add(new Paragraph(text)
+                            .SetFont(font)
+                            .SetFontSize(25)
+                            .SetHorizontalAlignment(iText.Layout.Properties.HorizontalAlignment.CENTER));
+
+                text = new Text($"Цена всех поездок: {reportData.OverallPrice.ToString("C")}");
+
+                doc.Add(new Paragraph(text)
+                            .SetFont(font));
+
+                text = new Text($"Общее время в пути: {reportData.OverallTravelTime.ToString("d'д 'h'ч 'm'м'")}");
+                
+                doc.Add(new Paragraph(text)
+                            .SetFont(font)
+                            .SetMarginBottom(30));
+
+                text = new Text("Ваш самый частый маршрут");
+                doc.Add(new Paragraph(text)
+                            .SetFont(font)
+                            .SetFontSize(18));
+
+                text = new Text($"[{reportData.MostUsedRouteInfoId.ToString("D12")}] {reportData.MostUsedDeparture} --> {reportData.MostUsedArrival} | Перевозчик {reportData.MostUsedCompany}");
+                doc.Add(new Paragraph(text)
+                            .SetFont(font));
+
+                text = new Text($"Количество заказов на этот маршрут: {reportData.MostUsedOrderCount}\n Сумма этих заказов составила {reportData.MostUsedSpent.ToString("C")}");
+                doc.Add(new Paragraph(text)
+                            .SetFont(font)
+                            .SetMarginBottom(30));
+
+                text = new Text("Ваши заказы за этот период");
+                doc.Add(new Paragraph(text)
+                            .SetFont(font)
+                            .SetFontSize(18));
+
+                Table table = null;
+
+                foreach (var pos in reportPositions)
+                {
+
+                    table = new Table(UnitValue.CreatePercentArray(new float[] { 0.75f, 1, 1}));
+                    table.SetFont(font);
+                    table.UseAllAvailableWidth();
+                    table.SetMarginBottom(5);
+                    table.SetKeepTogether(true);
+
+                    table.AddCell(new Cell(1, 3).Add(new Paragraph($"Номер заказа {pos.OrderId.ToString("D12")}")
+                                                         .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                                                         .SimulateBold()
+                                                         ));
+
+                    table.AddCell(new Cell(1, 3).Add(new Paragraph($"Дата заказа {pos.OrderDate.ToString("D")}")
+                                                         .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                                                         .SimulateBold()
+                                                         ));
+
+                    table.AddCell(new Cell(1, 1).Add(new Paragraph("Отправление")));
+                    table.AddCell(new Cell(1, 1).Add(new Paragraph(pos.DepartureCity)));
+                    table.AddCell(new Cell(1, 1).Add(new Paragraph(pos.DepartureDate.ToString())));
+
+                    table.AddCell(new Cell(1, 1).Add(new Paragraph("Прибытие")));
+                    table.AddCell(new Cell(1, 1).Add(new Paragraph(pos.ArrivalCity)));
+                    table.AddCell(new Cell(1, 1).Add(new Paragraph(pos.ArrivalDate.ToString())));
+
+                    string prices = "";
+
+                    if (pos.AdultCount != 0)
+                        prices += $"Взрослый {pos.AdultCount} x {pos.AdultPrice.ToString("C")}";
+
+                    if (pos.UnderageCount != 0 && !string.IsNullOrWhiteSpace(prices))
+                        prices += $"\nДетский {pos.UnderageCount} x {pos.UnderagePrice.ToString("C")}";
+                    else if (pos.UnderageCount != 0 && string.IsNullOrWhiteSpace(prices))
+                        prices += $"Детский {pos.UnderageCount} x {pos.UnderagePrice.ToString("C")}";
+
+                    table.AddCell(new Cell(1, 3).Add(new Paragraph(prices)
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.RIGHT)));
+
+                    //table.AddCell();
+
+                    doc.Add(table);
+
+                    doc.Add(new Paragraph($"ИТОГО: {pos.TotalPrice.ToString("C")}")
+                        .SetFont(font)
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.RIGHT)
+                        .SimulateBold()
+                        .SetMarginBottom(40));
+
+                }
+
+                doc.Close();
+
+            });
+
         }
 
         #region Bindings
@@ -243,6 +418,17 @@ namespace UserApp.ViewModel
             set
             {
                 searchType = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private SearchTypes? searchTypeSelected;
+        public SearchTypes? SearchTypeSelected
+        {
+            get => searchTypeSelected;
+            set
+            {
+                searchTypeSelected = value;
                 OnPropertyChanged();
             }
         }
@@ -280,6 +466,17 @@ namespace UserApp.ViewModel
             }
         }
 
+        private bool noOrdersFound = false;
+        public bool NoOrdersFound
+        {
+            get => noOrdersFound;
+            set
+            {
+                noOrdersFound = value;
+                OnPropertyChanged();
+            }
+        }
+
         private ObservableCollection<Model.ReportPositionData> reportPositions = new ObservableCollection<Model.ReportPositionData>();
         public ObservableCollection<Model.ReportPositionData> ReportPositions
         {
@@ -307,6 +504,7 @@ namespace UserApp.ViewModel
         #region Commands
 
         public RelayCommand CmdGetReport { get; private set; }
+        public RelayCommand CmdExportPDF { get; private set; }
 
         #endregion
 

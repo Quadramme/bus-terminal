@@ -6,32 +6,45 @@
              xmlns:local="clr-namespace:UserApp.View.UserControls.Report"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <local:ReportCreatedConverter x:Key="ReportCreatedConverter"/>
+        <local:NoOrdersConverter x:Key="NoOrdersConverter" />
+    </UserControl.Resources>
+
     <Grid>
-        <StackPanel Margin="25">
 
-            <local:ReportDateCard Margin="0 0 0 25" />
+        <Label VerticalAlignment="Center" HorizontalAlignment="Center"
+               FontSize="30" FontWeight="Light"
+               Content="Покупок не было"
+               Visibility="{Binding Path=NoOrdersFound, Converter={StaticResource NoOrdersConverter}}"/>
 
-            <ScrollViewer>
+        <ScrollViewer Margin="25"
+                          Style="{StaticResource MaterialDesignScrollViewer}"
+                          VerticalScrollBarVisibility="Visible" >
 
-                <StackPanel>
+            <StackPanel>
 
-                    <local:ReportDataCard Margin="0 0 0 25"
-                                          DataContext="{Binding Path=ReportData}"/>
+                <local:ReportDateCard Margin="0 0 0 25" />
 
-                    <ItemsControl ItemsSource="{Binding Path=ReportPositions}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Path=TotalPrice}"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                <local:ReportDataCard Margin="0 0 0 25"
+                                              DataContext="{Binding Path=ReportData}"
+                                              Visibility="{Binding Path=vmMain.vmReport.ReportCreated,
+                                                           RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                                           Converter={StaticResource ReportCreatedConverter}}"/>
 
-                </StackPanel>
-                
-            </ScrollViewer>
-            
-            
+                <ItemsControl ItemsSource="{Binding Path=ReportPositions}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <local:ReportPositionCard Margin="0 0 0 15"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
 
-        </StackPanel>
+                </ItemsControl>
+
+            </StackPanel>
+
+        </ScrollViewer>
+
     </Grid>
+
 </UserControl>

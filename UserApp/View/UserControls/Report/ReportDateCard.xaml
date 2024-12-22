@@ -60,7 +60,9 @@
                 <Button Width="200" 
                         FontWeight="Light" Style="{StaticResource MaterialDesignOutlinedLightButton}"
                         Visibility="{Binding Path=ReportCreated, Converter={StaticResource ReportCreatedConverter}}"
-                        Content="Экспортировать в PDF" />
+                        Content="Экспортировать в PDF" 
+                        Command="{Binding Path=vmMain.vmReport.CmdExportPDF,
+                                     RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
 
             </StackPanel>
 

@@ -7,17 +7,140 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <local:NotZeroVisibilityConverter x:Key="NotZeroVisibilityConverter"/>
+    </UserControl.Resources>
+    
     <Grid>
 
         <Rectangle Panel.ZIndex="0"
            Fill="White" RadiusX="8" RadiusY="8" StrokeThickness="0" 
            Effect="{DynamicResource MaterialDesignElevationShadow1}" />
 
-        <StackPanel Margin="25"
-                    Orientation="Horizontal" >
-            
-            
-            
+        <StackPanel Margin="25">
+
+            <Grid Margin="0 0 0 30">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+               VerticalAlignment="Center"
+               FontSize="25" FontWeight="Light"
+               Text="{Binding Path=OrderId, StringFormat=Заказ {0:D12}}" />
+
+                <TextBlock Grid.Column="1"
+               VerticalAlignment="Center" 
+               FontSize="15" FontWeight="Light"  TextAlignment="Right"
+               Text="{Binding Path=OrderDate, StringFormat=Дата оформления {0:D}, ConverterCulture=ru-RU}" />
+
+            </Grid>
+
+            <Separator Margin="0 0 0 30"/>
+
+            <Grid Margin="0 0 0 30">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+
+                    <TextBlock Margin="0 0 0 5" VerticalAlignment="Center"
+                   FontSize="15" FontWeight="Light"
+                   Text="Отправление" />
+
+                    <TextBlock Margin="0 0 0 5" VerticalAlignment="Center"
+                   FontSize="19" FontWeight="Bold"
+                   Text="{Binding Path=DepartureDate, StringFormat='{}{0:t}, {0:D}', ConverterCulture=ru-RU}" />
+
+                    <TextBlock Margin="0 0 0 3" VerticalAlignment="Center"
+                   FontSize="15" TextWrapping="WrapWithOverflow"
+                   Text="{Binding Path=DepartureCity}" />
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+
+                    <TextBlock Margin="0 0 0 5" VerticalAlignment="Center"
+                   FontSize="15" FontWeight="Light"
+                   Text="Прибытие" />
+
+                    <TextBlock Margin="0 0 0 5" VerticalAlignment="Center"
+                   FontSize="19" FontWeight="Bold"
+                   Text="{Binding Path=ArrivalDate, StringFormat='{}{0:t}, {0:D}', ConverterCulture=ru-RU}" />
+
+                    <TextBlock Margin="0 0 0 3" VerticalAlignment="Center"
+                   FontSize="15" TextWrapping="WrapWithOverflow"
+                   Text="{Binding Path=ArrivalCity}" />
+
+                </StackPanel>
+
+            </Grid>
+
+            <Separator Margin="0 0 0 30"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="1">
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                        Margin="0 0 0 5">
+
+                        <TextBlock Grid.Column="0"
+                                   VerticalAlignment="Bottom" 
+                                   FontSize="15"
+                                   Visibility="{Binding Path=AdultCount, Converter={StaticResource NotZeroVisibilityConverter}}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="Взрослый {0} x {1:C}"
+                                              ConverterCulture="ru-RU">
+                                    <Binding Path="AdultCount"/>
+                                    <Binding Path="AdultPrice"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                        Margin="0 0 0 9">
+                        <TextBlock Grid.Column="0"
+                                   VerticalAlignment="Bottom" 
+                                   FontSize="15"
+                                   Visibility="{Binding Path=UnderageCount, Converter={StaticResource NotZeroVisibilityConverter}}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="Детский {0} x {1:C}"
+                                        ConverterCulture="ru-RU">
+                                    <Binding Path="UnderageCount"/>
+                                    <Binding Path="UnderagePrice"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right">
+
+                        <TextBlock Grid.Column="0"
+                           VerticalAlignment="Bottom" 
+                           FontSize="25"
+                           Text="Итого: " />
+
+                        <TextBlock Grid.Column="1"
+                           VerticalAlignment="Bottom" 
+                           FontSize="29" FontWeight="Bold"  TextAlignment="Right"
+                           Text="{Binding Path=TotalPrice, StringFormat={}{0:C}, ConverterCulture=ru-RU}" />
+
+                    </StackPanel>
+                </StackPanel>
+
+            </Grid>
+
         </StackPanel>
 
     </Grid>

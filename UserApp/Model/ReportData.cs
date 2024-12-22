@@ -9,6 +9,7 @@ namespace UserApp.Model
     public class ReportPositionData
     {
         public int OrderId { get; set; }
+        public DateTime OrderDate { get; set; }
         public decimal AdultPrice { get; set; }
         public int AdultCount { get; set; }
         public decimal UnderagePrice { get; set; }
